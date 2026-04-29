@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>成員 · BC 戰隊</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #0a0a0f;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px 60px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .back-btn {
+      text-decoration: none;
+      color: #5aa8ff;
+      font-size: 1.2rem;
+      padding: 6px 14px;
+      border: 1px solid #1e2a40;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover { background: #1e2a40; }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+    }
+    header h1 span { color: #5aa8ff; }
+
+    .member-count {
+      margin-left: auto;
+      font-size: 0.85rem;
+      color: #555;
+      letter-spacing: 0.1em;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .member-card {
+      background: #111118;
+      border: 1px solid #1e1e30;
+      border-radius: 14px;
+      padding: 28px 16px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .member-card:hover {
+      transform: translateY(-5px);
+      border-color: #5aa8ff;
+      box-shadow: 0 6px 28px rgba(90, 168, 255, 0.18);
+    }
+
+    .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e2a40, #2a3a60);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #5aa8ff;
+      border: 2px solid #2a3a60;
+    }
+
+    .member-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: center;
+      word-break: break-all;
+      color: #d0d0d0;
+    }
+    .member-card:hover .member-name { color: #5aa8ff; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: #111118;
+      border: 1px solid #2a3a60;
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: 340px;
+      max-width: 90vw;
+      text-align: center;
+      position: relative;
+    }
+
+    .modal .close-btn {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal .close-btn:hover { color: #fff; }
+
+    .modal .modal-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e2a40, #2a3a60);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #5aa8ff;
+      border: 2px solid #5aa8ff;
+      margin: 0 auto 18px;
+    }
+
+    .modal h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .profile-placeholder {
+      background: #0d0d18;
+      border: 1px dashed #2a3050;
+      border-radius: 10px;
+      padding: 20px;
+      color: #444;
+      font-size: 0.88rem;
+      letter-spacing: 0.05em;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .profile-role {
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #5aa8ff;
+      background: rgba(90,168,255,0.08);
+      border: 1px solid rgba(90,168,255,0.2);
+      border-radius: 8px;
+      padding: 6px 12px;
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #0d0d18;
+      border-radius: 8px;
+      font-size: 0.88rem;
+    }
+
+    .profile-row .key {
+      color: #666;
+    }
+
+    .profile-row .value {
+      color: #d0d0d0;
+      font-weight: 600;
+    }
+
+    .profile-row .value.gold {
+      color: #f0c040;
+    }
+
+    .profile-row .value.silver {
+      color: #a0b8cc;
+    }
+
+    .profile-row .value.platinum {
+      color: #7df5e0;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .badge {
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(240,192,64,0.1);
+      border: 1px solid rgba(240,192,64,0.3);
+      color: #f0c040;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="back-btn">← 返回</a>
+    <h1>⚔️ <span>成員</span></h1>
+    <span class="member-count">11 位成員</span>
+  </header>
+
+  <div class="grid" id="memberGrid"></div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="close-btn" onclick="closeModal()">✕</button>
+      <div class="modal-avatar" id="modalAvatar"></div>
+      <h2 id="modalName"></h2>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const memberData = {
+      "emotional damage": {
+        role: "戰隊BC成員",
+        tech: "BC 高等",
+        seasons: [],
+        badges: []
+      },
+      "TW_1923dll": {
+        role: "戰隊BC成員",
+        tech: "BC 高等",
+        seasons: [
+          { label: "第零賽季排位", value: "第一名　白銀一", cls: "silver" },
+          { label: "第一賽季排位", value: "第一名　白金一", cls: "platinum" },
+          { label: "第二賽季排位", value: "第二名　黃金二", cls: "gold" },
+        ],
+        badges: []
+      },
+      "fhgu666": {
+        role: "戰隊BC成員",
+        tech: "低等",
+        seasons: [],
+        badges: [],
+        note: "哥布林 give"
+      },
+      "BC_1q2w9487": {
+        role: "戰隊BC成員",
+        tech: "低等",
+        seasons: [],
+        badges: [],
+        note: "超級手機小刀靠賽成員"
+      },
+      "djdjdhdjjd987": {
+        role: "戰隊BC成員",
+        tech: "低等",
+        seasons: [],
+        badges: []
+      },
+      "eddie": {
+        role: "戰隊BC成員",
+        tech: "中等",
+        seasons: [],
+        badges: [],
+        note: "十五歲・彰化人"
+      },
+      "Kai": {
+        role: "戰隊BC成員 · BCCL 考官",
+        tech: "中等",
+        seasons: [],
+        badges: [],
+        note: "十五歲・新竹人"
+      },
+      "sus_super": {
+        role: "戰隊BC成員 · DL 考官",
+        tech: "中等",
+        seasons: [
+          { label: "第一賽季排位", value: "第三名　黃金二", cls: "gold" },
+          { label: "第二賽季排位", value: "第三名　黃金一", cls: "gold" },
+        ],
+        badges: ["連勝排行榜第三名"],
+        note: "新北人"
+      },
+      "jhjdsysntt": {
+        role: "戰隊BC成員",
+        tech: "中等",
+        seasons: [],
+        badges: [],
+        note: "有時會 P2W、鞭屍"
+      },
+      "BC_Star": {
+        role: "戰隊副團長 · BC 小刀考官",
+        tech: "BC 中等",
+        seasons: [],
+        badges: []
+      },
+      "Bad_Bacon": {
+        role: "BC 戰隊團長",
+        tech: "BC 高等",
+        seasons: [
+          { label: "第零賽季排位", value: "第二名　青銅二", cls: "silver" },
+          { label: "第一賽季排位", value: "第二名　黃金三", cls: "gold" },
+          { label: "第二賽季排位", value: "第一名　白金一", cls: "platinum" },
+        ],
+        badges: ["戰隊連勝第一名 · 58連勝"]
+      }
+    };
+
+    const memberNames = [
+      "Bad_Bacon", "BC_Star", "jhjdsysntt", "sus_super",
+      "Kai", "eddie", "djdjdhdjjd987", "BC_1q2w9487", "fhgu666",
+      "TW_1923dll", "emotional damage"
+    ];
+
+    const grid = document.getElementById("memberGrid");
+
+    memberNames.forEach(name => {
+      const card = document.createElement("div");
+      card.className = "member-card";
+      card.innerHTML = `
+        <div class="avatar">${name[0].toUpperCase()}</div>
+        <div class="member-name">${name}</div>
+      `;
+      card.addEventListener("click", () => openModal(name));
+      grid.appendChild(card);
+    });
+
+    function openModal(name) {
+      document.getElementById("modalName").textContent = name;
+      document.getElementById("modalAvatar").textContent = name[0].toUpperCase();
+
+      const data = memberData[name];
+      const content = document.getElementById("modalContent");
+
+      if (!data) {
+        content.innerHTML = `<div class="profile-placeholder">個人資料尚未建立</div>`;
+      } else {
+        const seasonsHTML = data.seasons.map(s => `
+          <div class="profile-row">
+            <span class="key">${s.label}</span>
+            <span class="value ${s.cls}">${s.value}</span>
+          </div>
+        `).join("");
+
+        const badgesHTML = data.badges.length
+          ? `<div class="badges">${data.badges.map(b => `<span class="badge">🏅 ${b}</span>`).join("")}</div>`
+          : "";
+
+        const techHTML = data.tech ? `
+          <div class="profile-row">
+            <span class="key">技術等級</span>
+            <span class="value">${data.tech}</span>
+          </div>` : "";
+
+        const noteHTML = data.note ? `
+          <div class="profile-row">
+            <span class="key">備註</span>
+            <span class="value">${data.note}</span>
+          </div>` : "";
+
+        content.innerHTML = `
+          <div class="profile-info">
+            <div class="profile-role">${data.role}</div>
+            ${techHTML}
+            ${seasonsHTML}
+            ${badgesHTML}
+            ${noteHTML}
+          </div>
+        `;
+      }
+
+      document.getElementById("modalOverlay").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("modalOverlay").classList.remove("show");
+    }
+
+    document.getElementById("modalOverlay").addEventListener("click", function(e) {
+      if (e.target === this) closeModal();
+    });
+  </script>
+
+</body>
+</html>

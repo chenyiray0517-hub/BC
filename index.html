@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BC 戰隊</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0a0a0f;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      color: #ffffff;
+      text-shadow: 0 0 30px rgba(100, 180, 255, 0.5);
+    }
+
+    .hero h1 span {
+      color: #5aa8ff;
+    }
+
+    .hero p {
+      margin-top: 12px;
+      font-size: 1rem;
+      color: #666;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .menu {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0 20px;
+    }
+
+    .menu-card {
+      width: 180px;
+      height: 200px;
+      background: #111118;
+      border: 1px solid #1e1e30;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-6px);
+      border-color: #5aa8ff;
+      box-shadow: 0 8px 32px rgba(90, 168, 255, 0.2);
+    }
+
+    .menu-card .icon {
+      font-size: 2.8rem;
+    }
+
+    .menu-card .label {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: #d0d0d0;
+    }
+
+    .menu-card:hover .label {
+      color: #5aa8ff;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 20px;
+      font-size: 0.75rem;
+      color: #333;
+      letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <h1>BC <span>戰隊</span></h1>
+    <p>Battle Corps · Official Portal</p>
+  </div>
+
+  <nav class="menu">
+    <a href="members.html" class="menu-card">
+      <div class="icon">⚔️</div>
+      <div class="label">成員</div>
+    </a>
+    <a href="examiners.html" class="menu-card">
+      <div class="icon">🎖️</div>
+      <div class="label">考官</div>
+    </a>
+    <a href="leaderboard.html" class="menu-card">
+      <div class="icon">🏆</div>
+      <div class="label">排行榜</div>
+    </a>
+  </nav>
+
+  <footer>BC 戰隊 · 2026</footer>
+
+</body>
+</html>

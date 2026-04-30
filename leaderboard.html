@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>排行榜 · BC 戰隊</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: #0a0a0f;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px 60px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .back-btn {
+      text-decoration: none;
+      color: #5aa8ff;
+      font-size: 1.2rem;
+      padding: 6px 14px;
+      border: 1px solid #1e2a40;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .back-btn:hover { background: #1e2a40; }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+    }
+    header h1 span { color: #f0c040; }
+
+    .section-title {
+      text-align: center;
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      color: #555;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    /* Podium top 3 */
+    .podium {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 16px;
+      max-width: 560px;
+      margin: 0 auto 48px;
+    }
+
+    .podium-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .podium-item .avatar {
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e2a40, #2a3a60);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #5aa8ff;
+    }
+
+    .podium-item .p-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: center;
+      word-break: break-all;
+    }
+
+    .podium-item .p-streak {
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+    }
+
+    .podium-block {
+      width: 100%;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    /* 1st */
+    .podium-item.first { order: 2; }
+    .podium-item.first .avatar { width: 72px; height: 72px; font-size: 1.8rem; border: 2px solid #f0c040; }
+    .podium-item.first .p-name { color: #f0c040; }
+    .podium-item.first .p-streak { color: #f0c040; }
+    .podium-item.first .podium-block { height: 90px; background: linear-gradient(180deg, #3a2a00, #1e1500); border: 1px solid #f0c040; }
+
+    /* 2nd */
+    .podium-item.second { order: 1; }
+    .podium-item.second .avatar { width: 60px; height: 60px; font-size: 1.5rem; border: 2px solid #a0b8cc; }
+    .podium-item.second .p-name { color: #a0b8cc; }
+    .podium-item.second .p-streak { color: #a0b8cc; }
+    .podium-item.second .podium-block { height: 64px; background: linear-gradient(180deg, #1a2530, #0f1820); border: 1px solid #a0b8cc; }
+
+    /* 3rd */
+    .podium-item.third { order: 3; }
+    .podium-item.third .avatar { width: 56px; height: 56px; font-size: 1.4rem; border: 2px solid #c87d3e; }
+    .podium-item.third .p-name { color: #c87d3e; }
+    .podium-item.third .p-streak { color: #c87d3e; }
+    .podium-item.third .podium-block { height: 44px; background: linear-gradient(180deg, #2a1a0a, #1a0f05); border: 1px solid #c87d3e; }
+
+    .podium-item { flex: 1; max-width: 160px; }
+
+    /* Rest of list */
+    .rank-list {
+      max-width: 560px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rank-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #111118;
+      border: 1px solid #1e1e30;
+      border-radius: 12px;
+      padding: 14px 20px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .rank-row:hover {
+      border-color: #2a3a60;
+      box-shadow: 0 4px 16px rgba(90, 168, 255, 0.08);
+    }
+
+    .rank-num {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #444;
+      width: 28px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .rank-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e2a40, #2a3a60);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #5aa8ff;
+      border: 1px solid #2a3a60;
+      flex-shrink: 0;
+    }
+
+    .rank-name {
+      flex: 1;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #d0d0d0;
+    }
+
+    .rank-streak {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #5aa8ff;
+      letter-spacing: 0.03em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="back-btn">← 返回</a>
+    <h1>🏆 <span>排行榜</span></h1>
+  </header>
+
+  <p class="section-title">連勝排行榜</p>
+
+  <!-- Top 3 Podium -->
+  <div class="podium">
+    <div class="podium-item second">
+      <div class="avatar">K</div>
+      <div class="p-name">Kai</div>
+      <div class="p-streak">30 連勝</div>
+      <div class="podium-block">🥈</div>
+    </div>
+    <div class="podium-item first">
+      <div class="avatar">B</div>
+      <div class="p-name">Bad_Bacon</div>
+      <div class="p-streak">58 連勝</div>
+      <div class="podium-block">🥇</div>
+    </div>
+    <div class="podium-item third">
+      <div class="avatar">S</div>
+      <div class="p-name">sus_super</div>
+      <div class="p-streak">29 連勝</div>
+      <div class="podium-block">🥉</div>
+    </div>
+  </div>
+
+  <!-- Rank 4–8 -->
+  <div class="rank-list">
+    <div class="rank-row">
+      <div class="rank-num">4</div>
+      <div class="rank-avatar">T</div>
+      <div class="rank-name">TW_1923dll</div>
+      <div class="rank-streak">23 連勝</div>
+    </div>
+    <div class="rank-row">
+      <div class="rank-num">5</div>
+      <div class="rank-avatar">J</div>
+      <div class="rank-name">jhgdsysntt</div>
+      <div class="rank-streak">21 連勝</div>
+    </div>
+    <div class="rank-row">
+      <div class="rank-num">6</div>
+      <div class="rank-avatar">B</div>
+      <div class="rank-name">BC_1q2w9487</div>
+      <div class="rank-streak">13 連勝</div>
+    </div>
+    <div class="rank-row">
+      <div class="rank-num">7</div>
+      <div class="rank-avatar">D</div>
+      <div class="rank-name">djdjdhdjjd987</div>
+      <div class="rank-streak">10 連勝</div>
+    </div>
+    <div class="rank-row">
+      <div class="rank-num">8</div>
+      <div class="rank-avatar">F</div>
+      <div class="rank-name">fhgu666</div>
+      <div class="rank-streak">5 連勝</div>
+    </div>
+  </div>
+
+</body>
+</html>

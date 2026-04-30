@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>成員 · BC 戰隊</title>
+  <title>考官 · BC 戰隊</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -40,7 +40,7 @@
     }
     header h1 span { color: #5aa8ff; }
 
-    .member-count {
+    .examiner-count {
       margin-left: auto;
       font-size: 0.85rem;
       color: #555;
@@ -49,17 +49,17 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 24px;
       max-width: 900px;
       margin: 0 auto;
     }
 
-    .member-card {
+    .examiner-card {
       background: #111118;
       border: 1px solid #1e1e30;
       border-radius: 14px;
-      padding: 28px 16px 22px;
+      padding: 32px 20px 26px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -67,34 +67,45 @@
       cursor: pointer;
       transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
-    .member-card:hover {
+    .examiner-card:hover {
       transform: translateY(-5px);
       border-color: #5aa8ff;
       box-shadow: 0 6px 28px rgba(90, 168, 255, 0.18);
     }
 
     .avatar {
-      width: 64px;
-      height: 64px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       background: linear-gradient(135deg, #1e2a40, #2a3a60);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       font-weight: 800;
       color: #5aa8ff;
       border: 2px solid #2a3a60;
     }
 
-    .member-name {
+    .examiner-name {
       font-size: 0.95rem;
       font-weight: 600;
       text-align: center;
       word-break: break-all;
       color: #d0d0d0;
     }
-    .member-card:hover .member-name { color: #5aa8ff; }
+    .examiner-card:hover .examiner-name { color: #5aa8ff; }
+
+    .specialty-tag {
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: rgba(90, 168, 255, 0.1);
+      border: 1px solid rgba(90, 168, 255, 0.25);
+      color: #5aa8ff;
+      letter-spacing: 0.08em;
+    }
 
     /* Modal */
     .modal-overlay {
@@ -154,16 +165,6 @@
       color: #fff;
     }
 
-    .profile-placeholder {
-      background: #0d0d18;
-      border: 1px dashed #2a3050;
-      border-radius: 10px;
-      padding: 20px;
-      color: #444;
-      font-size: 0.88rem;
-      letter-spacing: 0.05em;
-    }
-
     .profile-info {
       display: flex;
       flex-direction: column;
@@ -194,26 +195,11 @@
       font-size: 0.88rem;
     }
 
-    .profile-row .key {
-      color: #666;
-    }
-
-    .profile-row .value {
-      color: #d0d0d0;
-      font-weight: 600;
-    }
-
-    .profile-row .value.gold {
-      color: #f0c040;
-    }
-
-    .profile-row .value.silver {
-      color: #a0b8cc;
-    }
-
-    .profile-row .value.platinum {
-      color: #7df5e0;
-    }
+    .profile-row .key { color: #666; }
+    .profile-row .value { color: #d0d0d0; font-weight: 600; }
+    .profile-row .value.gold { color: #f0c040; }
+    .profile-row .value.silver { color: #a0b8cc; }
+    .profile-row .value.platinum { color: #7df5e0; }
 
     .badges {
       display: flex;
@@ -236,11 +222,11 @@
 
   <header>
     <a href="index.html" class="back-btn">← 返回</a>
-    <h1>⚔️ <span>成員</span></h1>
-    <span class="member-count">11 位成員</span>
+    <h1>🎖️ <span>考官</span></h1>
+    <span class="examiner-count">4 位考官</span>
   </header>
 
-  <div class="grid" id="memberGrid"></div>
+  <div class="grid" id="examinerGrid"></div>
 
   <!-- Modal -->
   <div class="modal-overlay" id="modalOverlay">
@@ -253,59 +239,17 @@
   </div>
 
   <script>
-    const memberData = {
-      "emotional damage": {
-        role: "戰隊BC成員",
-        tech: "BC 高等",
+    const examinerData = {
+      "BC_Star": {
+        role: "戰隊副團長 · BC 小刀考官",
+        specialty: "⚔️ 刀考官",
+        tech: "BC 中等",
         seasons: [],
         badges: []
-      },
-      "TW_1923dll": {
-        role: "戰隊BC成員",
-        tech: "BC 高等",
-        seasons: [
-          { label: "第零賽季排位", value: "第一名　白銀一", cls: "silver" },
-          { label: "第一賽季排位", value: "第一名　白金一", cls: "platinum" },
-          { label: "第二賽季排位", value: "第二名　黃金二", cls: "gold" },
-        ],
-        badges: []
-      },
-      "fhgu666": {
-        role: "戰隊BC成員",
-        tech: "低等",
-        seasons: [],
-        badges: [],
-        note: "哥布林 give"
-      },
-      "BC_1q2w9487": {
-        role: "戰隊BC成員",
-        tech: "低等",
-        seasons: [],
-        badges: [],
-        note: "超級手機小刀靠賽成員"
-      },
-      "djdjdhdjjd987": {
-        role: "戰隊BC成員",
-        tech: "低等",
-        seasons: [],
-        badges: []
-      },
-      "eddie": {
-        role: "戰隊BC成員",
-        tech: "中等",
-        seasons: [],
-        badges: [],
-        note: "十五歲・彰化人"
-      },
-      "Kai": {
-        role: "戰隊BC成員 · BCCL 考官",
-        tech: "中等",
-        seasons: [],
-        badges: [],
-        note: "十五歲・新竹人"
       },
       "sus_super": {
         role: "戰隊BC成員 · DL 考官",
+        specialty: "🔫 DL 考官",
         tech: "中等",
         seasons: [
           { label: "第一賽季排位", value: "第三名　黃金二", cls: "gold" },
@@ -314,47 +258,39 @@
         badges: ["連勝排行榜第三名"],
         note: "新北人"
       },
-      "jhgdsysntt": {
-        role: "戰隊BC成員",
+      "Kai": {
+        role: "戰隊BC成員 · BCCL 考官",
+        specialty: "🎯 CL 考官",
         tech: "中等",
         seasons: [],
         badges: [],
-        note: "有時會 P2W、鞭屍"
+        note: "十五歲・新竹人"
       },
-      "BC_Star": {
-        role: "戰隊副團長 · BC 小刀考官",
-        tech: "BC 中等",
+      "emotional damage": {
+        role: "戰隊BC成員 · 狙擊考官",
+        specialty: "🔭 狙考官",
+        tech: "BC 高等",
         seasons: [],
         badges: []
-      },
-      "Bad_Bacon": {
-        role: "BC 戰隊團長",
-        tech: "BC 高等",
-        seasons: [
-          { label: "第零賽季排位", value: "第二名　青銅二", cls: "silver" },
-          { label: "第一賽季排位", value: "第二名　黃金三", cls: "gold" },
-          { label: "第二賽季排位", value: "第一名　白金一", cls: "platinum" },
-        ],
-        badges: ["戰隊連勝第一名 · 58連勝"]
       }
     };
 
-    const memberNames = [
-      "Bad_Bacon", "BC_Star", "jhgdsysntt", "sus_super",
-      "Kai", "eddie", "djdjdhdjjd987", "BC_1q2w9487", "fhgu666",
-      "TW_1923dll", "emotional damage"
-    ];
+    const examinerNames = ["BC_Star", "sus_super", "Kai", "emotional damage"];
 
-    const grid = document.getElementById("memberGrid");
+    const grid = document.getElementById("examinerGrid");
 
-    memberNames.forEach(name => {
+    examinerNames.forEach(name => {
+      const data = examinerData[name];
       const card = document.createElement("div");
-      card.className = "member-card";
+      card.className = "examiner-card";
       card.innerHTML = `
         <div class="avatar">${name[0].toUpperCase()}</div>
-        <div class="member-name">${name}</div>
+        <div class="examiner-name">${name}</div>
+        <div class="specialty-tag">${data.specialty}</div>
       `;
-      card.addEventListener("click", () => openModal(name));
+      card.addEventListener("click", () => {
+        window.location.href = `members.html?member=${encodeURIComponent(name)}`;
+      });
       grid.appendChild(card);
     });
 
@@ -362,45 +298,41 @@
       document.getElementById("modalName").textContent = name;
       document.getElementById("modalAvatar").textContent = name[0].toUpperCase();
 
-      const data = memberData[name];
+      const data = examinerData[name];
       const content = document.getElementById("modalContent");
 
-      if (!data) {
-        content.innerHTML = `<div class="profile-placeholder">個人資料尚未建立</div>`;
-      } else {
-        const seasonsHTML = data.seasons.map(s => `
-          <div class="profile-row">
-            <span class="key">${s.label}</span>
-            <span class="value ${s.cls}">${s.value}</span>
-          </div>
-        `).join("");
+      const seasonsHTML = data.seasons.map(s => `
+        <div class="profile-row">
+          <span class="key">${s.label}</span>
+          <span class="value ${s.cls}">${s.value}</span>
+        </div>
+      `).join("");
 
-        const badgesHTML = data.badges.length
-          ? `<div class="badges">${data.badges.map(b => `<span class="badge">🏅 ${b}</span>`).join("")}</div>`
-          : "";
+      const badgesHTML = data.badges.length
+        ? `<div class="badges">${data.badges.map(b => `<span class="badge">🏅 ${b}</span>`).join("")}</div>`
+        : "";
 
-        const techHTML = data.tech ? `
-          <div class="profile-row">
-            <span class="key">技術等級</span>
-            <span class="value">${data.tech}</span>
-          </div>` : "";
+      const techHTML = data.tech ? `
+        <div class="profile-row">
+          <span class="key">技術等級</span>
+          <span class="value">${data.tech}</span>
+        </div>` : "";
 
-        const noteHTML = data.note ? `
-          <div class="profile-row">
-            <span class="key">備註</span>
-            <span class="value">${data.note}</span>
-          </div>` : "";
+      const noteHTML = data.note ? `
+        <div class="profile-row">
+          <span class="key">備註</span>
+          <span class="value">${data.note}</span>
+        </div>` : "";
 
-        content.innerHTML = `
-          <div class="profile-info">
-            <div class="profile-role">${data.role}</div>
-            ${techHTML}
-            ${seasonsHTML}
-            ${badgesHTML}
-            ${noteHTML}
-          </div>
-        `;
-      }
+      content.innerHTML = `
+        <div class="profile-info">
+          <div class="profile-role">${data.role}</div>
+          ${techHTML}
+          ${seasonsHTML}
+          ${badgesHTML}
+          ${noteHTML}
+        </div>
+      `;
 
       document.getElementById("modalOverlay").classList.add("show");
     }
@@ -412,10 +344,6 @@
     document.getElementById("modalOverlay").addEventListener("click", function(e) {
       if (e.target === this) closeModal();
     });
-
-    const params = new URLSearchParams(window.location.search);
-    const target = params.get("member");
-    if (target && memberData[target]) openModal(target);
   </script>
 
 </body>

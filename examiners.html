@@ -19,7 +19,10 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 48px;
+      margin-bottom: 40px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .back-btn {
@@ -47,12 +50,25 @@
       letter-spacing: 0.1em;
     }
 
+    /* ── Two-column layout ── */
+    .page-layout {
+      display: flex;
+      gap: 28px;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: flex-start;
+    }
+
+    .main-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* ── Examiner grid ── */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 24px;
-      max-width: 900px;
-      margin: 0 auto;
     }
 
     .examiner-card {
@@ -107,7 +123,129 @@
       letter-spacing: 0.08em;
     }
 
-    /* Modal */
+    /* ── Applicants sidebar ── */
+    .sidebar {
+      width: 272px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-panel {
+      background: #111118;
+      border: 1px solid #1e2a30;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid #1e2a30;
+      background: #0d0d18;
+    }
+
+    .sidebar-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #5aff8a;
+    }
+
+    .sidebar-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: rgba(90, 255, 138, 0.1);
+      border: 1px solid rgba(90, 255, 138, 0.25);
+      color: #5aff8a;
+      letter-spacing: 0.06em;
+    }
+
+    .applicant-list {
+      max-height: 520px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #2a3050 transparent;
+    }
+    .applicant-list::-webkit-scrollbar { width: 4px; }
+    .applicant-list::-webkit-scrollbar-track { background: transparent; }
+    .applicant-list::-webkit-scrollbar-thumb { background: #2a3050; border-radius: 4px; }
+
+    .applicant-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 18px;
+      border-bottom: 1px solid #161625;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .applicant-item:last-child { border-bottom: none; }
+    .applicant-item:hover { background: #161625; }
+
+    .applicant-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a2a1a, #1e3020);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #5aff8a;
+      border: 1px solid #2a4030;
+      flex-shrink: 0;
+    }
+
+    .applicant-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .applicant-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #d0d0d0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .applicant-subject {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .applicant-arrow {
+      color: #333;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+    .applicant-item:hover .applicant-arrow { color: #5aff8a; }
+
+    .empty-state {
+      padding: 36px 20px;
+      text-align: center;
+      color: #333;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      line-height: 1.7;
+    }
+    .empty-state .empty-icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 10px;
+      opacity: 0.4;
+    }
+
+    /* ── Examiner modal ── */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -216,6 +354,103 @@
       border: 1px solid rgba(240,192,64,0.3);
       color: #f0c040;
     }
+
+    /* ── Applicant detail modal ── */
+    .applicant-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .applicant-modal-overlay.show { display: flex; }
+
+    .applicant-modal {
+      background: #111118;
+      border: 1px solid #2a4030;
+      border-radius: 20px;
+      padding: 38px 34px;
+      width: 360px;
+      max-width: 92vw;
+      position: relative;
+      text-align: center;
+    }
+
+    .applicant-modal .close-btn {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .applicant-modal .close-btn:hover { color: #fff; }
+
+    .applicant-modal-avatar {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a2a1a, #1e3a24);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #5aff8a;
+      border: 2px solid #5aff8a;
+      margin: 0 auto 16px;
+    }
+
+    .applicant-modal h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .applicant-modal .subject-chip {
+      display: inline-block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: rgba(90, 255, 138, 0.1);
+      border: 1px solid rgba(90, 255, 138, 0.3);
+      color: #5aff8a;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+
+    .applicant-detail-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 13px;
+      background: #0d0d18;
+      border-radius: 8px;
+      font-size: 0.88rem;
+    }
+    .detail-row .key { color: #666; }
+    .detail-row .val { color: #d0d0d0; font-weight: 600; }
+
+    .applicant-modal .reg-time {
+      margin-top: 14px;
+      font-size: 0.75rem;
+      color: #333;
+      letter-spacing: 0.06em;
+    }
   </style>
 </head>
 <body>
@@ -226,9 +461,32 @@
     <span class="examiner-count">4 位考官</span>
   </header>
 
-  <div class="grid" id="examinerGrid"></div>
+  <div class="page-layout">
 
-  <!-- Modal -->
+    <!-- Left: Examiner grid -->
+    <div class="main-col">
+      <div class="grid" id="examinerGrid"></div>
+    </div>
+
+    <!-- Right: Applicants panel -->
+    <div class="sidebar">
+      <div class="sidebar-panel">
+        <div class="sidebar-header">
+          <span class="sidebar-title">📋 報考名單</span>
+          <span class="sidebar-badge" id="sidebarCount">0 人</span>
+        </div>
+        <div class="applicant-list" id="applicantList">
+          <div class="empty-state">
+            <span class="empty-icon">📭</span>
+            尚無報考資料<br>請至首頁報名考試
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Examiner modal -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <button class="close-btn" onclick="closeModal()">✕</button>
@@ -238,7 +496,20 @@
     </div>
   </div>
 
+  <!-- Applicant detail modal -->
+  <div class="applicant-modal-overlay" id="applicantModalOverlay">
+    <div class="applicant-modal">
+      <button class="close-btn" onclick="closeApplicantModal()">✕</button>
+      <div class="applicant-modal-avatar" id="appModalAvatar"></div>
+      <h2 id="appModalName"></h2>
+      <div class="subject-chip" id="appModalSubject"></div>
+      <div class="applicant-detail-rows" id="appModalRows"></div>
+      <div class="reg-time" id="appModalTime"></div>
+    </div>
+  </div>
+
   <script>
+    /* ── Examiner data ── */
     const examinerData = {
       "BC_Star": {
         role: "戰隊副團長 · BC 小刀考官",
@@ -277,8 +548,8 @@
 
     const examinerNames = ["BC_Star", "sus_super", "Kai", "emotional damage"];
 
+    /* ── Build examiner grid ── */
     const grid = document.getElementById("examinerGrid");
-
     examinerNames.forEach(name => {
       const data = examinerData[name];
       const card = document.createElement("div");
@@ -288,16 +559,14 @@
         <div class="examiner-name">${name}</div>
         <div class="specialty-tag">${data.specialty}</div>
       `;
-      card.addEventListener("click", () => {
-        window.location.href = `members.html?member=${encodeURIComponent(name)}`;
-      });
+      card.addEventListener("click", () => openModal(name));
       grid.appendChild(card);
     });
 
+    /* ── Examiner modal ── */
     function openModal(name) {
       document.getElementById("modalName").textContent = name;
       document.getElementById("modalAvatar").textContent = name[0].toUpperCase();
-
       const data = examinerData[name];
       const content = document.getElementById("modalContent");
 
@@ -305,34 +574,23 @@
         <div class="profile-row">
           <span class="key">${s.label}</span>
           <span class="value ${s.cls}">${s.value}</span>
-        </div>
-      `).join("");
+        </div>`).join("");
 
       const badgesHTML = data.badges.length
         ? `<div class="badges">${data.badges.map(b => `<span class="badge">🏅 ${b}</span>`).join("")}</div>`
         : "";
 
-      const techHTML = data.tech ? `
-        <div class="profile-row">
-          <span class="key">技術等級</span>
-          <span class="value">${data.tech}</span>
-        </div>` : "";
+      const techHTML = data.tech
+        ? `<div class="profile-row"><span class="key">技術等級</span><span class="value">${data.tech}</span></div>` : "";
 
-      const noteHTML = data.note ? `
-        <div class="profile-row">
-          <span class="key">備註</span>
-          <span class="value">${data.note}</span>
-        </div>` : "";
+      const noteHTML = data.note
+        ? `<div class="profile-row"><span class="key">備註</span><span class="value">${data.note}</span></div>` : "";
 
       content.innerHTML = `
         <div class="profile-info">
           <div class="profile-role">${data.role}</div>
-          ${techHTML}
-          ${seasonsHTML}
-          ${badgesHTML}
-          ${noteHTML}
-        </div>
-      `;
+          ${techHTML}${seasonsHTML}${badgesHTML}${noteHTML}
+        </div>`;
 
       document.getElementById("modalOverlay").classList.add("show");
     }
@@ -340,10 +598,81 @@
     function closeModal() {
       document.getElementById("modalOverlay").classList.remove("show");
     }
-
     document.getElementById("modalOverlay").addEventListener("click", function(e) {
       if (e.target === this) closeModal();
     });
+
+    /* ── Load applicants from localStorage ── */
+    const subjectIcons = {
+      "BC 小刀": "⚔️",
+      "DL": "🔫",
+      "CL": "🎯",
+      "狙擊": "🔭"
+    };
+
+    function formatTime(ts) {
+      const d = new Date(ts);
+      return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ` +
+             `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+
+    function loadApplicants() {
+      const list = JSON.parse(localStorage.getItem('bc_exam_registrations') || '[]');
+      const container = document.getElementById('applicantList');
+      const badge = document.getElementById('sidebarCount');
+
+      badge.textContent = `${list.length} 人`;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <span class="empty-icon">📭</span>
+            尚無報考資料<br>請至首頁報名考試
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = '';
+      list.slice().reverse().forEach(reg => {
+        const icon = subjectIcons[reg.subject] || '📋';
+        const item = document.createElement('div');
+        item.className = 'applicant-item';
+        item.innerHTML = `
+          <div class="applicant-avatar">${reg.robloxName[0].toUpperCase()}</div>
+          <div class="applicant-info">
+            <div class="applicant-name">${reg.robloxName}</div>
+            <div class="applicant-subject">${icon} ${reg.subject}</div>
+          </div>
+          <div class="applicant-arrow">›</div>`;
+        item.addEventListener('click', () => openApplicantModal(reg));
+        container.appendChild(item);
+      });
+    }
+
+    /* ── Applicant detail modal ── */
+    function openApplicantModal(reg) {
+      const icon = subjectIcons[reg.subject] || '📋';
+      document.getElementById('appModalAvatar').textContent = reg.robloxName[0].toUpperCase();
+      document.getElementById('appModalName').textContent = reg.robloxName;
+      document.getElementById('appModalSubject').textContent = `${icon} ${reg.subject}`;
+      document.getElementById('appModalRows').innerHTML = `
+        <div class="detail-row"><span class="key">Roblox 暱稱</span><span class="val">${reg.robloxName}</span></div>
+        <div class="detail-row"><span class="key">Roblox ID</span><span class="val">${reg.robloxId}</span></div>
+        <div class="detail-row"><span class="key">FB 名字</span><span class="val">${reg.fbName}</span></div>
+        <div class="detail-row"><span class="key">報考科目</span><span class="val">${icon} ${reg.subject}</span></div>
+      `;
+      document.getElementById('appModalTime').textContent = `報名時間：${formatTime(reg.timestamp)}`;
+      document.getElementById('applicantModalOverlay').classList.add('show');
+    }
+
+    function closeApplicantModal() {
+      document.getElementById('applicantModalOverlay').classList.remove('show');
+    }
+    document.getElementById('applicantModalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeApplicantModal();
+    });
+
+    loadApplicants();
   </script>
 
 </body>

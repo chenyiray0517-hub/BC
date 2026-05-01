@@ -231,19 +231,102 @@
     .applicant-item:hover .applicant-arrow { color: #5aff8a; }
 
     .del-btn {
-      background: none;
-      border: none;
-      color: transparent;
-      font-size: 0.85rem;
+      background: rgba(255,90,90,0.06);
+      border: 1px solid rgba(255,90,90,0.2);
+      color: #ff5a5a;
+      font-size: 1rem;
       cursor: pointer;
-      padding: 4px 7px;
-      border-radius: 4px;
+      padding: 8px 14px;
+      border-radius: 8px;
       flex-shrink: 0;
-      transition: color 0.15s, background 0.15s;
+      transition: color 0.15s, background 0.15s, border-color 0.15s, transform 0.1s;
       line-height: 1;
+      font-weight: 700;
     }
-    .applicant-item:hover .del-btn { color: #555; }
-    .del-btn:hover { color: #ff5a5a !important; background: rgba(255,90,90,0.1); }
+    .del-btn:hover {
+      color: #ff3a3a !important;
+      background: rgba(255,90,90,0.18);
+      border-color: rgba(255,90,90,0.5);
+      transform: scale(1.08);
+    }
+
+    /* ── Confirm dialog ── */
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 400;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirm-overlay.show { display: flex; }
+
+    .confirm-box {
+      background: #111118;
+      border: 1px solid rgba(255,90,90,0.35);
+      border-radius: 18px;
+      padding: 36px 32px 28px;
+      width: 320px;
+      max-width: 88vw;
+      text-align: center;
+    }
+
+    .confirm-icon {
+      font-size: 2.4rem;
+      margin-bottom: 14px;
+    }
+
+    .confirm-box h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .confirm-box p {
+      font-size: 0.88rem;
+      color: #888;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .confirm-box p strong {
+      color: #ff5a5a;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .confirm-cancel-btn {
+      flex: 1;
+      padding: 11px;
+      border-radius: 10px;
+      border: 1px solid #2a2a3a;
+      background: #1a1a28;
+      color: #aaa;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .confirm-cancel-btn:hover { background: #22223a; color: #fff; }
+
+    .confirm-ok-btn {
+      flex: 1;
+      padding: 11px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,90,90,0.4);
+      background: rgba(255,90,90,0.12);
+      color: #ff5a5a;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .confirm-ok-btn:hover { background: rgba(255,90,90,0.25); border-color: rgba(255,90,90,0.7); }
 
     .empty-state {
       padding: 36px 20px;
@@ -513,6 +596,19 @@
     </div>
   </div>
 
+  <!-- Confirm delete dialog -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <div class="confirm-icon">⚠️</div>
+      <h3>確認取消考生資格？</h3>
+      <p>即將移除 <strong id="confirmName"></strong> 的報名紀錄，此操作無法復原。</p>
+      <div class="confirm-actions">
+        <button class="confirm-cancel-btn" id="confirmCancelBtn">取消</button>
+        <button class="confirm-ok-btn" id="confirmOkBtn">確認移除</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Applicant detail modal -->
   <div class="applicant-modal-overlay" id="applicantModalOverlay">
     <div class="applicant-modal">
@@ -682,7 +778,7 @@
         item.querySelector('.applicant-info').addEventListener('click', () => openApplicantModal(reg));
         item.querySelector('.del-btn').addEventListener('click', e => {
           e.stopPropagation();
-          db.ref('registrations').child(reg.id).remove();
+          showConfirm(reg.robloxName, reg.id);
         });
         container.appendChild(item);
       });
@@ -703,6 +799,35 @@
       document.getElementById('appModalTime').textContent = `報名時間：${formatTime(reg.timestamp)}`;
       document.getElementById('applicantModalOverlay').classList.add('show');
     }
+
+    /* ── Confirm delete ── */
+    let pendingDeleteId = null;
+
+    function showConfirm(name, id) {
+      pendingDeleteId = id;
+      document.getElementById('confirmName').textContent = name;
+      document.getElementById('confirmOverlay').classList.add('show');
+    }
+
+    document.getElementById('confirmCancelBtn').addEventListener('click', () => {
+      pendingDeleteId = null;
+      document.getElementById('confirmOverlay').classList.remove('show');
+    });
+
+    document.getElementById('confirmOkBtn').addEventListener('click', () => {
+      if (pendingDeleteId) {
+        db.ref('registrations').child(pendingDeleteId).remove();
+        pendingDeleteId = null;
+      }
+      document.getElementById('confirmOverlay').classList.remove('show');
+    });
+
+    document.getElementById('confirmOverlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        pendingDeleteId = null;
+        this.classList.remove('show');
+      }
+    });
 
     function closeApplicantModal() {
       document.getElementById('applicantModalOverlay').classList.remove('show');

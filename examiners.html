@@ -230,6 +230,21 @@
     }
     .applicant-item:hover .applicant-arrow { color: #5aff8a; }
 
+    .del-btn {
+      background: none;
+      border: none;
+      color: transparent;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 4px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      transition: color 0.15s, background 0.15s;
+      line-height: 1;
+    }
+    .applicant-item:hover .del-btn { color: #555; }
+    .del-btn:hover { color: #ff5a5a !important; background: rgba(255,90,90,0.1); }
+
     .empty-state {
       padding: 36px 20px;
       text-align: center;
@@ -452,6 +467,8 @@
       letter-spacing: 0.06em;
     }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -602,22 +619,32 @@
       if (e.target === this) closeModal();
     });
 
-    /* ── Load applicants from localStorage ── */
-    const subjectIcons = {
-      "BC 小刀": "⚔️",
-      "DL": "🔫",
-      "CL": "🎯",
-      "狙擊": "🔭"
+    // ── 貼上你的 Firebase 設定（與 index.html 相同）────────
+    const firebaseConfig = {
+      apiKey:            "AIzaSyBtAuBr9S1S9wIoor4RqF_WFvRyaQagKpA",
+      authDomain:        "bc-team-14516.firebaseapp.com",
+      projectId:         "bc-team-14516",
+      storageBucket:     "bc-team-14516.firebasestorage.app",
+      messagingSenderId: "609885248341",
+      appId:             "1:609885248341:web:61f88d7b7dc5ccad176ddc"
     };
+    // ────────────────────────────────────────────────────────
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    /* ── Helpers ── */
+    const subjectIcons = { "BC 小刀": "⚔️", "DL": "🔫", "CL": "🎯", "狙擊": "🔭" };
 
     function formatTime(ts) {
-      const d = new Date(ts);
+      if (!ts) return '—';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
       return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ` +
              `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
     }
 
-    function loadApplicants() {
-      const list = JSON.parse(localStorage.getItem('bc_exam_registrations') || '[]');
+    /* ── Real-time applicants listener ── */
+    db.collection('registrations').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       const container = document.getElementById('applicantList');
       const badge = document.getElementById('sidebarCount');
 
@@ -633,7 +660,7 @@
       }
 
       container.innerHTML = '';
-      list.slice().reverse().forEach(reg => {
+      list.forEach(reg => {
         const icon = subjectIcons[reg.subject] || '📋';
         const item = document.createElement('div');
         item.className = 'applicant-item';
@@ -643,11 +670,18 @@
             <div class="applicant-name">${reg.robloxName}</div>
             <div class="applicant-subject">${icon} ${reg.subject}</div>
           </div>
-          <div class="applicant-arrow">›</div>`;
-        item.addEventListener('click', () => openApplicantModal(reg));
+          <div class="applicant-arrow">›</div>
+          <button class="del-btn" title="刪除">✕</button>`;
+        item.querySelector('.applicant-arrow').addEventListener('click', () => openApplicantModal(reg));
+        item.querySelector('.applicant-avatar').addEventListener('click', () => openApplicantModal(reg));
+        item.querySelector('.applicant-info').addEventListener('click', () => openApplicantModal(reg));
+        item.querySelector('.del-btn').addEventListener('click', e => {
+          e.stopPropagation();
+          db.collection('registrations').doc(reg.id).delete();
+        });
         container.appendChild(item);
       });
-    }
+    });
 
     /* ── Applicant detail modal ── */
     function openApplicantModal(reg) {
@@ -671,8 +705,6 @@
     document.getElementById('applicantModalOverlay').addEventListener('click', function(e) {
       if (e.target === this) closeApplicantModal();
     });
-
-    loadApplicants();
   </script>
 
 </body>

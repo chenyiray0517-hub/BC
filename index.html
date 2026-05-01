@@ -238,6 +238,8 @@
       letter-spacing: 0.04em;
     }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -308,6 +310,19 @@
   <footer>BC 戰隊 · 2026</footer>
 
   <script>
+    // ── 貼上你的 Firebase 設定 ──────────────────────────────
+    const firebaseConfig = {
+      apiKey:            "AIzaSyBtAuBr9S1S9wIoor4RqF_WFvRyaQagKpA",
+      authDomain:        "bc-team-14516.firebaseapp.com",
+      projectId:         "bc-team-14516",
+      storageBucket:     "bc-team-14516.firebasestorage.app",
+      messagingSenderId: "609885248341",
+      appId:             "1:609885248341:web:61f88d7b7dc5ccad176ddc"
+    };
+    // ────────────────────────────────────────────────────────
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     function openRegModal() {
       document.getElementById('regModalOverlay').classList.add('show');
     }
@@ -315,27 +330,38 @@
     function closeRegModal() {
       document.getElementById('regModalOverlay').classList.remove('show');
       document.getElementById('regForm').reset();
+      const btn = document.querySelector('.submit-btn');
+      btn.textContent = '確認報名';
+      btn.disabled = false;
       document.getElementById('regForm').style.display = 'flex';
       document.getElementById('successMsg').style.display = 'none';
     }
 
-    function submitReg(e) {
+    async function submitReg(e) {
       e.preventDefault();
-      const reg = {
-        id: Date.now(),
-        robloxName: document.getElementById('robloxName').value.trim(),
-        robloxId: document.getElementById('robloxId').value.trim(),
-        fbName: document.getElementById('fbName').value.trim(),
-        subject: document.getElementById('subject').value,
-        timestamp: Date.now()
-      };
-      const list = JSON.parse(localStorage.getItem('bc_exam_registrations') || '[]');
-      list.push(reg);
-      localStorage.setItem('bc_exam_registrations', JSON.stringify(list));
+      const btn = document.querySelector('.submit-btn');
+      btn.textContent = '送出中…';
+      btn.disabled = true;
 
-      document.getElementById('regForm').style.display = 'none';
-      document.getElementById('successMsg').style.display = 'block';
-      setTimeout(closeRegModal, 2600);
+      const reg = {
+        robloxName: document.getElementById('robloxName').value.trim(),
+        robloxId:   document.getElementById('robloxId').value.trim(),
+        fbName:     document.getElementById('fbName').value.trim(),
+        subject:    document.getElementById('subject').value,
+        timestamp:  firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      try {
+        await db.collection('registrations').add(reg);
+        document.getElementById('regForm').style.display = 'none';
+        document.getElementById('successMsg').style.display = 'block';
+        setTimeout(closeRegModal, 2600);
+      } catch (err) {
+        console.error(err);
+        btn.textContent = '確認報名';
+        btn.disabled = false;
+        alert('報名失敗，請稍後再試。');
+      }
     }
 
     document.getElementById('regModalOverlay').addEventListener('click', function(e) {

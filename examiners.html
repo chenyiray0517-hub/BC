@@ -468,7 +468,7 @@
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -623,6 +623,7 @@
     const firebaseConfig = {
       apiKey:            "AIzaSyBtAuBr9S1S9wIoor4RqF_WFvRyaQagKpA",
       authDomain:        "bc-team-14516.firebaseapp.com",
+      databaseURL:       "https://bc-team-14516-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId:         "bc-team-14516",
       storageBucket:     "bc-team-14516.firebasestorage.app",
       messagingSenderId: "609885248341",
@@ -630,21 +631,25 @@
     };
     // ────────────────────────────────────────────────────────
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const db = firebase.database();
 
     /* ── Helpers ── */
     const subjectIcons = { "BC 小刀": "⚔️", "DL": "🔫", "CL": "🎯", "狙擊": "🔭" };
 
     function formatTime(ts) {
       if (!ts) return '—';
-      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const d = new Date(ts);
       return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ` +
              `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
     }
 
     /* ── Real-time applicants listener ── */
-    db.collection('registrations').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    db.ref('registrations').on('value', snapshot => {
+      const data = snapshot.val() || {};
+      const list = Object.entries(data)
+        .map(([key, val]) => ({ id: key, ...val }))
+        .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
       const container = document.getElementById('applicantList');
       const badge = document.getElementById('sidebarCount');
 
@@ -677,7 +682,7 @@
         item.querySelector('.applicant-info').addEventListener('click', () => openApplicantModal(reg));
         item.querySelector('.del-btn').addEventListener('click', e => {
           e.stopPropagation();
-          db.collection('registrations').doc(reg.id).delete();
+          db.ref('registrations').child(reg.id).remove();
         });
         container.appendChild(item);
       });
